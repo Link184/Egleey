@@ -90,7 +90,6 @@ public class MainPresenter implements Presenter<MainModel>, EgleeySocket.Connect
                 snackbar.show();
                 break;
             case CONNECTED:
-                mainModel.enrollEgleey();
                 snackbar.setDuration(1).show();
                 break;
         }
@@ -99,9 +98,11 @@ public class MainPresenter implements Presenter<MainModel>, EgleeySocket.Connect
     @Override
     public void onDataRecivied(String event, Object data) {
         Deserializator<Device> deserializator = new Deserializator<>(data.toString(), Device[].class);
+        mainModel.enrollEgleey(deserializator.getModels());
+
         for (Device d: deserializator.getModels()) {
 
-            Log.e(TAG, "startEgleeyServices: " + d.toString());
+            Log.d(TAG, "startEgleeyServices: " + d.toString());
         }
     }
 }

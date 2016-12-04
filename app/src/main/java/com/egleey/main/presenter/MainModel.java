@@ -4,7 +4,7 @@ package com.egleey.main.presenter;
 import android.content.Context;
 import android.support.design.widget.Snackbar;
 
-import com.egleey.api.socketing.EgleeySocket;
+import com.egleey.api.Device;
 import com.egleey.base.Navigator;
 
 /**
@@ -22,8 +22,9 @@ public interface MainModel {
 
     /**
      * Method need to be called when received response from Egleey services and need to prepare UI
+     * @param devices list to render
      */
-    void enrollEgleey();
+    void enrollEgleey(Device[] devices);
 
     /**
      * Method need to be called when the activity become inactive

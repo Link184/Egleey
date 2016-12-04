@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.egleey.R;
 
 import butterknife.ButterKnife;
 
@@ -35,13 +34,6 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected void addFragment(int containerViewId, Fragment fragment) {
-
-        FragmentTransaction fragmentTransaction = this.getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(containerViewId, fragment, null);
-        fragmentTransaction.commit();
-    }
-
-    protected void replaceFragment(int containerViewId, Fragment fragment) {
 
         FragmentTransaction fragmentTransaction = this.getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(containerViewId, fragment, null);

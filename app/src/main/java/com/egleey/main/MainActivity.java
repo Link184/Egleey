@@ -11,7 +11,9 @@ import android.widget.TextView;
 
 import com.egleey.R;
 import com.egleey.R2;
+import com.egleey.api.Device;
 import com.egleey.base.BaseActivity;
+import com.egleey.base.BaseFragment;
 import com.egleey.base.Navigator;
 import com.egleey.main.fragments.devices.DeviceFragment;
 import com.egleey.main.presenter.MainModel;
@@ -20,6 +22,8 @@ import butterknife.BindView;
 
 public class MainActivity extends BaseActivity implements MainModel{
     private MainPresenter mainPresenter;
+
+    private BaseFragment[] fragments = {new DeviceFragment()};
 
     @BindView(R2.id.toolbar)
     Toolbar toolbar;
@@ -32,6 +36,14 @@ public class MainActivity extends BaseActivity implements MainModel{
         setContentView(R.layout.activity_main);
 
         mainPresenter = new MainPresenter(this);
+
+        initViews();
+    }
+
+    private void initViews() {
+//        for (BaseFragment fragment : fragments) {
+//            addFragment(R.id.mainContent, fragment);
+//        }
     }
 
     @Override
@@ -103,8 +115,13 @@ public class MainActivity extends BaseActivity implements MainModel{
     }
 
     @Override
-    public void enrollEgleey() {
-        addFragment(R.id.mainContent, new DeviceFragment());
+    public void enrollEgleey(Device[] devices) {
+//        fragments[MainConstants.MainFragments.FRAGMENT_DEVICE.ordinal()] = DeviceFragment.newInstance(devices);
+        addFragment(R.id.mainContent, DeviceFragment.newInstance(devices));
+//        DeviceFragment fragment = (DeviceFragment) fragments[MainConstants.MainFragments.FRAGMENT_DEVICE.ordinal()];
+//        Bundle arguments = new Bundle();
+//        arguments.putParcelableArray(MainConstants.KEY_DEVICES_ARGUMENTS, devices);
+//        fragment.setArguments(arguments);
     }
 
     @Override
