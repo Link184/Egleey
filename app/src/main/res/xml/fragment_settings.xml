@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+        android:key="host"
+        android:title="Egleey host"/>
+
+    <EditTextPreference
+        android:key="port"
+        android:title="Egleey port"/>
+
+    <EditTextPreference
+        android:key="email"
+        android:title="Client email address" />
+
+</PreferenceScreen>
