@@ -1,25 +1,21 @@
 package com.egleey.api.engine;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.List;
 
 /**
  * Created by AMD on 12/3/16.
  */
 
-public class Deserializator<R extends String, M> {
-    private List<M> models;
+public class Deserializator<M> {
+    private M[] models;
 
-    public Deserializator(R reader) {
+    public Deserializator(String reader, Class<M[]> model) {
         Gson gson = new Gson();
-        Type listType = new TypeToken<List<M>>(){}.getType();
-        models = gson.fromJson(reader, listType);
+//        Type listType = new TypeToken<List<M>>(){}.getType();
+        models = gson.fromJson(reader, model);
     }
 
-    public List<M> getModels() {
+    public M[] getModels() {
         return models;
     }
 }

@@ -34,7 +34,7 @@ public class SettingsActivity extends BaseActivity{
 
     private void initToolbar() {
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("");
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         titleToolbar.setText(getString(R.string.settings_activity_title));
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
@@ -44,6 +44,7 @@ public class SettingsActivity extends BaseActivity{
         if (getIntent().getBooleanExtra(MainConstants.WRONG_SOCKET_CREDENTIALS, false)) {
             getMessageDialog(getString(R.string.wrong_cred_socket_message_content))
                     .title(getString(R.string.wrong_cred_socket_message_title))
+                    .positiveText(getString(R.string.continue_button))
                     .show();
         } else {
             FragmentTransaction fragmentTransaction = this.getFragmentManager().beginTransaction();

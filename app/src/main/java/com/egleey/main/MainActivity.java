@@ -7,8 +7,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.egleey.R;
@@ -83,7 +81,7 @@ public class MainActivity extends BaseActivity implements MainModel{
     @Override
     protected void onPause() {
         super.onPause();
-        mainPresenter.stopEgleeyServices();
+        mainPresenter.stopEgleeyServices("message");
     }
 
     @Override

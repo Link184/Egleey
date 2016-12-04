@@ -4,13 +4,11 @@ import android.content.Context;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import java.net.URISyntaxException;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
 
 /**
  * Created by AMD on 11/13/16.
@@ -21,11 +19,10 @@ public class EgleeySocket {
     private Socket socket;
     private IO.Options opts = new IO.Options();
 
-    private ConnectionStatus connectionStatus;
+    private ConnectionListener connectionListener;
 
     public EgleeySocket(Context context) {
         EgleeyConfig config = new EgleeyConfig(PreferenceManager.getDefaultSharedPreferences(context));
-        connectionStatus = ConnectionStatus.DISCONNECTED;
 
         String host = config.getHost();
         opts.query = config.getSocketOpts();
@@ -35,35 +32,28 @@ public class EgleeySocket {
             e.printStackTrace();
         }
 
-        socket.on(Socket.EVENT_CONNECT, args -> connectionStatus = ConnectionStatus.CONNECTED);
-        socket.on(Socket.EVENT_DISCONNECT, args -> connectionStatus = ConnectionStatus.DISCONNECTED);
+        socket.on(Socket.EVENT_CONNECT, args -> connectionListener.onConnectionStatusChanged(ConnectionStatus.CONNECTED));
+        socket.on(Socket.EVENT_DISCONNECT, args -> connectionListener.onConnectionStatusChanged(ConnectionStatus.DISCONNECTED));
     }
 
-    public ConnectionStatus connectSocket() {
+    public void connectSocket() {
         try {
             socket.connect();
         } catch (NullPointerException e) {
-            connectionStatus = ConnectionStatus.WRONG_CREDENTIAL;
+            connectionListener.onConnectionStatusChanged(ConnectionStatus.WRONG_CREDENTIAL);
         }
-        return connectionStatus;
     }
 
     public void disconnectSocket() {
         socket.disconnect();
     }
 
-    public String addEvent(@NonNull String event) {
-        final String[] result = new String[1];
+    public void addEvent(@NonNull String event) {
         socket.on(event, args -> {
-            String response = null;
             for (Object o: args) {
-                Log.d(TAG, event + ": " + o.toString());
-                response += o.toString();
+                connectionListener.onDataRecivied(event, o);
             }
-            result[0] = response;
-
         });
-        return result[0];
     }
 
     public void removeEvent(@Nullable String event) {
@@ -74,9 +64,18 @@ public class EgleeySocket {
         }
     }
 
-    public ConnectionStatus getConnectionStatus() {
-        return connectionStatus;
+    public void addConnectionListener(ConnectionListener connectionListener) {
+        this.connectionListener = connectionListener;
+    }
+
+    public void removeConnectionListener() {
+        this.connectionListener = null;
     }
 
     public enum ConnectionStatus {CONNECTED, DISCONNECTED, WRONG_CREDENTIAL}
+
+    public interface ConnectionListener {
+        void onConnectionStatusChanged(ConnectionStatus status);
+        void onDataRecivied(String event, Object data);
+    }
 }

@@ -4,21 +4,24 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 
 import com.egleey.R;
+import com.egleey.api.Device;
+import com.egleey.api.engine.Deserializator;
 import com.egleey.api.socketing.EgleeySocket;
-import com.egleey.base.BaseActivity;
 import com.egleey.main.presenter.MainModel;
 import com.egleey.main.utils.MainConstants;
 import com.egleey.settings.SettingsActivity;
+
 
 
 /**
  * Created by AMD on 12/3/16.
  */
 
-public class MainPresenter implements Presenter<MainModel>{
+public class MainPresenter implements Presenter<MainModel>, EgleeySocket.ConnectionListener{
     private final String TAG = getClass().getSimpleName();
 
     private MainModel mainModel;
@@ -33,6 +36,7 @@ public class MainPresenter implements Presenter<MainModel>{
         this.mainModel = view;
         mainModel.initToolbar();
         egleeySocket = new EgleeySocket(view.getContext());
+        egleeySocket.addConnectionListener(this);
     }
 
     @Override
@@ -41,22 +45,12 @@ public class MainPresenter implements Presenter<MainModel>{
     }
 
     public void startEgleeyServices(@Nullable String... event) {
-        if (egleeySocket.getConnectionStatus() == EgleeySocket.ConnectionStatus.CONNECTED ||
-                performSocketConnect()) {
-            String response = null;
-            if (event != null) {
-                for (String e: event) {
-                    response += egleeySocket.addEvent(e);
-                }
+        egleeySocket.connectSocket();
+        if (event != null) {
+            for (String e: event) {
+                egleeySocket.addEvent(e);
             }
-
-//        Deserializator<String, Device> deserializator = new Deserializator<>(response);
-//        for (Device d: deserializator.getModels()) {
-//
-//            Log.e(TAG, "startEgleeyServices: " + d.toString());
-//        }
         }
-
     }
 
     public void stopEgleeyServices(@Nullable String... event) {
@@ -71,35 +65,43 @@ public class MainPresenter implements Presenter<MainModel>{
         }
     }
 
-    private boolean performSocketConnect() {
-        EgleeySocket.ConnectionStatus status = egleeySocket.connectSocket();
-        Log.e(TAG, "performSocketConnect: " + status.name());
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == MainConstants.CREDENTIAL_REQUIRED_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            Log.d(TAG, "onActivityResult: ");
+            egleeySocket.connectSocket();
+        }
+    }
+
+    @Override
+    public void onConnectionStatusChanged(EgleeySocket.ConnectionStatus status) {
+        Log.e(TAG, "onConnectionStatusChanged: " + status.name());
+        Snackbar snackbar = mainModel
+                .getSnackbar(mainModel.getContext().getString(R.string.disconnected_cred_socket_message_content))
+                .setAction(mainModel.getContext().getString(R.string.retry_button),
+                        v -> egleeySocket.connectSocket());
         switch (status) {
             case WRONG_CREDENTIAL:
                 Bundle extras = new Bundle();
                 extras.putBoolean(MainConstants.WRONG_SOCKET_CREDENTIALS, true);
                 mainModel.getNavigator().navigateForResult(MainConstants.CREDENTIAL_REQUIRED_REQUEST_CODE,
                         SettingsActivity.class, extras);
-                return false;
+                break;
             case DISCONNECTED:
-                mainModel.getSnackbar(mainModel.getContext().getString(R.string.disconnected_cred_socket_message_content))
-                        .setAction(mainModel.getContext().getString(R.string.retry_button),
-                                v -> performSocketConnect())
-                        .show();
-                return false;
+                snackbar.show();
+                break;
             case CONNECTED:
                 mainModel.enrollEgleey();
-                return true;
-            default:
-                return false;
+                snackbar.setDuration(1).show();
+                break;
         }
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == MainConstants.CREDENTIAL_REQUIRED_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            Log.d(TAG, "onActivityResult: ");
-            performSocketConnect();
+    @Override
+    public void onDataRecivied(String event, Object data) {
+        Deserializator<Device> deserializator = new Deserializator<>(data.toString(), Device[].class);
+        for (Device d: deserializator.getModels()) {
+
+            Log.e(TAG, "startEgleeyServices: " + d.toString());
         }
     }
-
 }
