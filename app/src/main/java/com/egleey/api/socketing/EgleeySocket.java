@@ -19,10 +19,11 @@ public class EgleeySocket {
     private Socket socket;
     private IO.Options opts = new IO.Options();
 
+    private EgleeyConfig config;
     private ConnectionListener connectionListener;
 
     public EgleeySocket(Context context) {
-        EgleeyConfig config = new EgleeyConfig(PreferenceManager.getDefaultSharedPreferences(context));
+        config = new EgleeyConfig(PreferenceManager.getDefaultSharedPreferences(context));
 
         String host = config.getHost();
         opts.query = config.getSocketOpts();
@@ -42,10 +43,12 @@ public class EgleeySocket {
         } catch (NullPointerException e) {
             connectionListener.onConnectionStatusChanged(ConnectionStatus.WRONG_CREDENTIAL);
         }
+        socket.emit("stream_start", config.getStramConfig());
     }
 
     public void disconnectSocket() {
         socket.disconnect();
+        socket.emit("stream_stop", config.getStramConfig());
     }
 
     public void addEvent(@NonNull String event) {

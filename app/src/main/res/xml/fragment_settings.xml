@@ -12,4 +12,12 @@
         android:key="email"
         android:title="Client email address" />
 
+    <ListPreference
+        android:key="interval"
+        android:title="Interval between data updates"
+        android:defaultValue="5000"
+        android:summary="%s"
+        android:entries="@array/intervalsEntries"
+        android:entryValues="@array/intervalsValues"/>
+
 </PreferenceScreen>

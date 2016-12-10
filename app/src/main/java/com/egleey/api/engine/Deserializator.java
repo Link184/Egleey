@@ -11,7 +11,6 @@ public class Deserializator<M> {
 
     public Deserializator(String reader, Class<M[]> model) {
         Gson gson = new Gson();
-//        Type listType = new TypeToken<List<M>>(){}.getType();
         models = gson.fromJson(reader, model);
     }
 

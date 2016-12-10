@@ -93,13 +93,13 @@ public class MainActivity extends BaseActivity implements MainModel{
     @Override
     protected void onPause() {
         super.onPause();
-        mainPresenter.stopEgleeyServices("message");
+        mainPresenter.stopEgleeyServices("message", "stream_data:test");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mainPresenter.startEgleeyServices("message");
+        mainPresenter.startEgleeyServices("message", "stream_data:test");
     }
 
     @Override

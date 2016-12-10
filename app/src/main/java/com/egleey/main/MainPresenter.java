@@ -42,6 +42,7 @@ public class MainPresenter implements Presenter<MainModel>, EgleeySocket.Connect
     @Override
     public void detachView() {
         this.mainModel = null;
+        egleeySocket.removeConnectionListener();
     }
 
     public void startEgleeyServices(@Nullable String... event) {
