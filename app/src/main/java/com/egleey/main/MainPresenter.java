@@ -8,14 +8,13 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 
 import com.egleey.R;
-import com.egleey.api.engine.Deserializator;
+import com.egleey.api.engine.Deserializer;
 import com.egleey.api.models.Device;
 import com.egleey.api.models.DeviceResponseObject;
 import com.egleey.api.socketing.EgleeySocket;
 import com.egleey.main.presenter.MainModel;
 import com.egleey.main.utils.MainConstants;
 import com.egleey.settings.SettingsActivity;
-
 
 
 /**
@@ -35,7 +34,6 @@ public class MainPresenter implements Presenter<MainModel>, EgleeySocket.Connect
     @Override
     public void attachView(MainModel view) {
         this.mainModel = view;
-        mainModel.initToolbar();
         egleeySocket = new EgleeySocket(view.getContext());
         egleeySocket.addConnectionListener(this);
     }
@@ -67,6 +65,10 @@ public class MainPresenter implements Presenter<MainModel>, EgleeySocket.Connect
         }
     }
 
+    public void commandStream(String command, String key, long id) {
+        egleeySocket.emit(command, key, id);
+    }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == MainConstants.CREDENTIAL_REQUIRED_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             Log.d(TAG, "onActivityResult: ");
@@ -83,10 +85,14 @@ public class MainPresenter implements Presenter<MainModel>, EgleeySocket.Connect
                         v -> egleeySocket.connectSocket());
         switch (status) {
             case WRONG_CREDENTIAL:
-                Bundle extras = new Bundle();
-                extras.putBoolean(MainConstants.WRONG_SOCKET_CREDENTIALS, true);
-                mainModel.getNavigator().navigateForResult(MainConstants.CREDENTIAL_REQUIRED_REQUEST_CODE,
-                        SettingsActivity.class, extras);
+                snackbar.setAction(mainModel.getContext().getString(R.string.settings_button),
+                        v -> {
+                            Bundle extras = new Bundle();
+                            extras.putBoolean(MainConstants.WRONG_SOCKET_CREDENTIALS, true);
+                            mainModel.getNavigator().navigateForResult(MainConstants.CREDENTIAL_REQUIRED_REQUEST_CODE,
+                                    SettingsActivity.class, extras);
+                        })
+                        .show();
                 break;
             case DISCONNECTED:
                 snackbar.show();
@@ -99,10 +105,10 @@ public class MainPresenter implements Presenter<MainModel>, EgleeySocket.Connect
 
     @Override
     public void onDataRecivied(String event, Object data) {
-        Deserializator<DeviceResponseObject> deserializator = new Deserializator<>(data.toString(), DeviceResponseObject.class);
-        mainModel.enrollEgleey(deserializator.getModel().getDevices());
+        Deserializer<DeviceResponseObject> deserializer = new Deserializer<>(data.toString(), DeviceResponseObject.class);
+        mainModel.enrollEgleey(event, deserializer.getModel().getDevices());
 
-        for (Device d: deserializator.getModel().getDevices()) {
+        for (Device d: deserializer.getModel().getDevices()) {
 
             Log.d(TAG, "startEgleeyServices: " + d.toString());
         }

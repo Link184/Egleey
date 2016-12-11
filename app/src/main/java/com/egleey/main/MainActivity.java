@@ -4,33 +4,27 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.egleey.R;
-import com.egleey.R2;
 import com.egleey.api.models.Device;
+import com.egleey.api.socketing.SocketEvents;
 import com.egleey.base.BaseActivity;
 import com.egleey.base.BaseFragment;
 import com.egleey.base.Navigator;
 import com.egleey.main.fragments.devices.DeviceFragment;
+import com.egleey.main.fragments.sensors.SensorFragment;
 import com.egleey.main.presenter.MainModel;
 
 import java.util.List;
 
-import butterknife.BindView;
-
 public class MainActivity extends BaseActivity implements MainModel{
+    private final String TAG = getClass().getSimpleName();
     private MainPresenter mainPresenter;
 
     private BaseFragment[] fragments = {new DeviceFragment()};
-
-    @BindView(R2.id.toolbar)
-    Toolbar toolbar;
-    @BindView(R2.id.titleField)
-    TextView titleToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,15 +61,6 @@ public class MainActivity extends BaseActivity implements MainModel{
     }
 
     @Override
-    public void initToolbar() {
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        titleToolbar.setText(getString(R.string.main_activity_title));
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
-    }
-
-    @Override
     public Context getContext() {
         return this;
     }
@@ -87,21 +72,20 @@ public class MainActivity extends BaseActivity implements MainModel{
 
     @Override
     public Snackbar getSnackbar(String message) {
-//        final ViewGroup viewGroup = (ViewGroup) ((ViewGroup) this
-//                .findViewById(android.R.id.content)).getChildAt(0);
         return super.getSnackbar(findViewById(R.id.mainContent), message);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mainPresenter.stopEgleeyServices("message", "stream_data:test");
+        mainPresenter.stopEgleeyServices(SocketEvents.DEVICE_NAMES);
+        mainPresenter.commandStream(SocketEvents.STREAM_STOP, SocketEvents.STREAM_DEVICE_DATA_KEY, 0);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mainPresenter.startEgleeyServices("message", "stream_data:test");
+        mainPresenter.startEgleeyServices(SocketEvents.DEVICE_NAMES);
     }
 
     @Override
@@ -117,17 +101,26 @@ public class MainActivity extends BaseActivity implements MainModel{
     }
 
     @Override
-    public void enrollEgleey(List<Device> devices) {
-//        fragments[MainConstants.MainFragments.FRAGMENT_DEVICE.ordinal()] = DeviceFragment.newInstance(devices);
-        addFragment(R.id.mainContent, DeviceFragment.newInstance(devices));
-//        DeviceFragment fragment = (DeviceFragment) fragments[MainConstants.MainFragments.FRAGMENT_DEVICE.ordinal()];
-//        Bundle arguments = new Bundle();
-//        arguments.putParcelableArray(MainConstants.KEY_DEVICES_ARGUMENTS, devices);
-//        fragment.setArguments(arguments);
+    public void enrollEgleey(String event, List<Device> devices) {
+        switch (event) {
+            case SocketEvents.DEVICE_NAMES:
+                addFragment(R.id.mainContent, DeviceFragment.newInstance(devices));
+                break;
+            case SocketEvents.STREAM_FEEDBACK:
+                addFragment(R.id.mainContent, SensorFragment.newInstance(devices));
+                break;
+        }
     }
 
     @Override
     public void killEgleey() {
 
+    }
+
+    @Override
+    public void onDeviceSelected(long id) {
+        Log.e(TAG, "onDeviceSelected: " + id);
+        mainPresenter.commandStream(SocketEvents.STREAM_START, SocketEvents.STREAM_DEVICE_DATA_KEY, id);
+        mainPresenter.startEgleeyServices(SocketEvents.STREAM_FEEDBACK);
     }
 }

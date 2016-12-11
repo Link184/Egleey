@@ -14,6 +14,8 @@ class EgleeyConfig {
     private final String PORT_KEY = "port";
     private final String EMAIL_KEY = "email";
     private final String INTERVAL_KEY = "interval";
+    private final String STREAM_KEY = "key";
+    private final String STREAM_ID = "device_id";
 
     private String host;
     private String email;
@@ -56,11 +58,12 @@ class EgleeyConfig {
     /**
      * @return JSON object which contains all configuration for stream manipulation
      */
-    public JSONObject getStramConfig () {
+    public JSONObject getStreamConfig(String key, long id) {
         JSONObject streamConfig = new JSONObject();
         try {
             streamConfig.put(INTERVAL_KEY, interval);
-            streamConfig.put("key", "test");
+            streamConfig.put(STREAM_KEY, key);
+            streamConfig.put(STREAM_ID, id);
         } catch (JSONException e) {
             e.printStackTrace();
         }

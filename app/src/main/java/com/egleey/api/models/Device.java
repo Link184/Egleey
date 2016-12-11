@@ -40,6 +40,16 @@ public class Device implements Parcelable{
         }
     };
 
+    @Override
+    public String toString() {
+        return "Device{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", data=" + data +
+                ", devices=" + devices +
+                '}';
+    }
+
     public long getId() {
         return id;
     }

@@ -7,8 +7,6 @@
     tools:context="com.egleey.main.MainActivity"
     android:orientation="vertical">
 
-    <include layout="@layout/toolbar_egleey"/>
-
     <FrameLayout
         android:id="@+id/mainContent"
         android:layout_width="match_parent"

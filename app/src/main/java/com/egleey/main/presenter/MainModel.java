@@ -20,16 +20,21 @@ public interface MainModel {
 
     Snackbar getSnackbar(String message);
 
-    void initToolbar();
-
     /**
      * Method need to be called when received response from Egleey services and need to prepare UI
+     * @param event the event name where the data are from.
      * @param devices list to render
      */
-    void enrollEgleey(List<Device> devices);
+    void enrollEgleey(String event, List<Device> devices);
 
     /**
      * Method need to be called when the activity become inactive
      */
     void killEgleey();
+
+    /**
+     * Method callback when user select a device.
+     * @param id device id
+     */
+    void onDeviceSelected(long id);
 }

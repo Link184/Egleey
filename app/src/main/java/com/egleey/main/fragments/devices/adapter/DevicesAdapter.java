@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.egleey.R;
 import com.egleey.api.models.Device;
+import com.egleey.main.MainActivity;
 
 import java.util.List;
 
@@ -46,9 +47,8 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.DeviceVi
         public DeviceViewHolder(View itemView) {
             super(itemView);
             deviceName = (TextView) itemView.findViewById(R.id.deviceName);
-
             itemView.setOnClickListener(view -> {
-
+                ((MainActivity) itemView.getContext()).onDeviceSelected(devices.get(getAdapterPosition()).getId());
             });
         }
     }

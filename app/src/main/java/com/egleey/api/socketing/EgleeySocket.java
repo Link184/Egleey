@@ -35,6 +35,7 @@ public class EgleeySocket {
 
         socket.on(Socket.EVENT_CONNECT, args -> connectionListener.onConnectionStatusChanged(ConnectionStatus.CONNECTED));
         socket.on(Socket.EVENT_DISCONNECT, args -> connectionListener.onConnectionStatusChanged(ConnectionStatus.DISCONNECTED));
+        socket.on(Socket.EVENT_CONNECT_ERROR, args -> connectionListener.onConnectionStatusChanged(ConnectionStatus.WRONG_CREDENTIAL));
     }
 
     public void connectSocket() {
@@ -43,12 +44,10 @@ public class EgleeySocket {
         } catch (NullPointerException e) {
             connectionListener.onConnectionStatusChanged(ConnectionStatus.WRONG_CREDENTIAL);
         }
-        socket.emit("stream_start", config.getStramConfig());
     }
 
     public void disconnectSocket() {
         socket.disconnect();
-        socket.emit("stream_stop", config.getStramConfig());
     }
 
     public void addEvent(@NonNull String event) {
@@ -65,6 +64,10 @@ public class EgleeySocket {
         } else {
             socket.off();
         }
+    }
+
+    public void emit(String event, String key, long id) {
+        socket.emit(event, config.getStreamConfig(key, id));
     }
 
     public void addConnectionListener(ConnectionListener connectionListener) {

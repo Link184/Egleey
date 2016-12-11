@@ -8,6 +8,7 @@
     <string name="wrong_cred_socket_message_title">Wrong Egleey credentials</string>
     <string name="wrong_cred_socket_message_content">Please complete all fields with valid credentials.</string>
     <string name="disconnected_cred_socket_message_content">Unable to connect to Egleey services. Please check your internet connection.</string>
+    <string name="settings_button">Settings</string>
     <string name="retry_button">Retry</string>
     <string name="continue_button">Continue</string>
 </resources>

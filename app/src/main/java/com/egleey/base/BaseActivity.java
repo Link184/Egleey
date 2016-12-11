@@ -33,7 +33,7 @@ public class BaseActivity extends AppCompatActivity {
         ButterKnife.bind(this);
     }
 
-    protected void addFragment(int containerViewId, Fragment fragment) {
+    public void addFragment(int containerViewId, Fragment fragment) {
 
         FragmentTransaction fragmentTransaction = this.getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(containerViewId, fragment, null);

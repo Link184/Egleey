@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.egleey.R;
-import com.egleey.main.fragments.sensors.adapter.model.Sensor;
+import com.egleey.api.models.Device;
 
 import java.util.List;
 
@@ -16,10 +16,10 @@ import java.util.List;
  */
 
 public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.SensorViewHolder> {
-    private List<Sensor> sensors;
+    private List<Device> devices;
 
-    public SensorAdapter(List<Sensor> sensors) {
-        this.sensors = sensors;
+    public SensorAdapter(List<Device> devices) {
+        this.devices = devices;
     }
 
     @Override
@@ -30,12 +30,12 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.SensorView
 
     @Override
     public void onBindViewHolder(SensorViewHolder holder, int position) {
-        holder.sensorName.setText(sensors.get(position).getName());
+        holder.sensorName.setText(devices.get(position).getData().toString());
     }
 
     @Override
     public int getItemCount() {
-        return sensors.size();
+        return devices.size();
     }
 
     protected class SensorViewHolder extends RecyclerView.ViewHolder{
@@ -44,6 +44,9 @@ public class SensorAdapter extends RecyclerView.Adapter<SensorAdapter.SensorView
         public SensorViewHolder(View itemView) {
             super(itemView);
             sensorName = (TextView) itemView.findViewById(R.id.sensorName);
+            itemView.setOnClickListener(v -> {
+
+            });
         }
     }
 }
