@@ -1,4 +1,4 @@
-package com.egleey.api;
+package com.egleey.api.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -13,6 +13,8 @@ import java.util.List;
  */
 
 public class Device implements Parcelable{
+    @SerializedName("id")
+    private long id;
     @SerializedName("name")
     private String name;
     @SerializedName("data")
@@ -21,6 +23,7 @@ public class Device implements Parcelable{
     private List<Device> devices;
 
     protected Device(Parcel in) {
+        id = in.readLong();
         name = in.readString();
         devices = in.createTypedArrayList(Device.CREATOR);
     }
@@ -37,13 +40,8 @@ public class Device implements Parcelable{
         }
     };
 
-    @Override
-    public String toString() {
-        return "Device{" +
-                "name='" + name + '\'' +
-                ", data=" + data +
-                ", devices=" + devices +
-                '}';
+    public long getId() {
+        return id;
     }
 
     public String getName() {
@@ -65,6 +63,7 @@ public class Device implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeLong(id);
         parcel.writeString(name);
         parcel.writeTypedList(devices);
     }

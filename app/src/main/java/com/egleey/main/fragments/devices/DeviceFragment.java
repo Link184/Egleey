@@ -10,10 +10,13 @@ import android.view.ViewGroup;
 
 import com.egleey.R;
 import com.egleey.R2;
-import com.egleey.api.Device;
+import com.egleey.api.models.Device;
 import com.egleey.base.BaseFragment;
 import com.egleey.main.fragments.devices.adapter.DevicesAdapter;
 import com.egleey.main.utils.MainConstants;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,10 +31,10 @@ public class DeviceFragment extends BaseFragment {
 
     private DevicesAdapter devicesAdapter;
 
-    public static DeviceFragment newInstance(Device[] devices) {
+    public static DeviceFragment newInstance(List<Device> devices) {
         DeviceFragment deviceFragment = new DeviceFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelableArray(MainConstants.KEY_DEVICES_ARGUMENTS, devices);
+        bundle.putParcelableArrayList(MainConstants.KEY_DEVICES_ARGUMENTS, new ArrayList<>(devices));
         deviceFragment.setArguments(bundle);
         return deviceFragment;
     }
@@ -51,7 +54,7 @@ public class DeviceFragment extends BaseFragment {
     }
 
     private void initViews() {
-        Device[] devices = (Device[]) getArguments().getParcelableArray(MainConstants.KEY_DEVICES_ARGUMENTS);
+        List<Device> devices = getArguments().getParcelableArrayList(MainConstants.KEY_DEVICES_ARGUMENTS);
         devicesAdapter = new DevicesAdapter(devices);
         devicesRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         devicesRecycler.setAdapter(devicesAdapter);

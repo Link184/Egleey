@@ -7,14 +7,14 @@ import com.google.gson.Gson;
  */
 
 public class Deserializator<M> {
-    private M[] models;
+    private M models;
 
-    public Deserializator(String reader, Class<M[]> model) {
+    public Deserializator(String reader, Class<M> model) {
         Gson gson = new Gson();
         models = gson.fromJson(reader, model);
     }
 
-    public M[] getModels() {
+    public M getModel() {
         return models;
     }
 }

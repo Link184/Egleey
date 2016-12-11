@@ -11,12 +11,14 @@ import android.widget.TextView;
 
 import com.egleey.R;
 import com.egleey.R2;
-import com.egleey.api.Device;
+import com.egleey.api.models.Device;
 import com.egleey.base.BaseActivity;
 import com.egleey.base.BaseFragment;
 import com.egleey.base.Navigator;
 import com.egleey.main.fragments.devices.DeviceFragment;
 import com.egleey.main.presenter.MainModel;
+
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -115,7 +117,7 @@ public class MainActivity extends BaseActivity implements MainModel{
     }
 
     @Override
-    public void enrollEgleey(Device[] devices) {
+    public void enrollEgleey(List<Device> devices) {
 //        fragments[MainConstants.MainFragments.FRAGMENT_DEVICE.ordinal()] = DeviceFragment.newInstance(devices);
         addFragment(R.id.mainContent, DeviceFragment.newInstance(devices));
 //        DeviceFragment fragment = (DeviceFragment) fragments[MainConstants.MainFragments.FRAGMENT_DEVICE.ordinal()];

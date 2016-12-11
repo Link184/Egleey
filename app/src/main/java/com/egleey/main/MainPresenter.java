@@ -8,8 +8,9 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 
 import com.egleey.R;
-import com.egleey.api.Device;
 import com.egleey.api.engine.Deserializator;
+import com.egleey.api.models.Device;
+import com.egleey.api.models.DeviceResponseObject;
 import com.egleey.api.socketing.EgleeySocket;
 import com.egleey.main.presenter.MainModel;
 import com.egleey.main.utils.MainConstants;
@@ -98,10 +99,10 @@ public class MainPresenter implements Presenter<MainModel>, EgleeySocket.Connect
 
     @Override
     public void onDataRecivied(String event, Object data) {
-        Deserializator<Device> deserializator = new Deserializator<>(data.toString(), Device[].class);
-        mainModel.enrollEgleey(deserializator.getModels());
+        Deserializator<DeviceResponseObject> deserializator = new Deserializator<>(data.toString(), DeviceResponseObject.class);
+        mainModel.enrollEgleey(deserializator.getModel().getDevices());
 
-        for (Device d: deserializator.getModels()) {
+        for (Device d: deserializator.getModel().getDevices()) {
 
             Log.d(TAG, "startEgleeyServices: " + d.toString());
         }

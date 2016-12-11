@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.egleey.R;
-import com.egleey.api.Device;
+import com.egleey.api.models.Device;
 
 import java.util.List;
 
@@ -17,9 +17,9 @@ import java.util.List;
  */
 
 public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.DeviceViewHolder> {
-    private Device[] devices;
+    private List<Device> devices;
 
-    public DevicesAdapter(Device[] devices) {
+    public DevicesAdapter(List<Device> devices) {
         this.devices = devices;
     }
 
@@ -31,12 +31,12 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.DeviceVi
 
     @Override
     public void onBindViewHolder(DeviceViewHolder holder, int position) {
-        holder.deviceName.setText(devices[position].getName());
+        holder.deviceName.setText(devices.get(position).getName());
     }
 
     @Override
     public int getItemCount() {
-        return devices.length;
+        return devices.size();
     }
 
 
@@ -48,13 +48,7 @@ public class DevicesAdapter extends RecyclerView.Adapter<DevicesAdapter.DeviceVi
             deviceName = (TextView) itemView.findViewById(R.id.deviceName);
 
             itemView.setOnClickListener(view -> {
-                List<Device> deviceList = DevicesAdapter.this.devices[getAdapterPosition()].getDevices();
-                if (deviceList != null) {
-                    Device[] subDevices = new Device[deviceList.size()];
-                    for (int i = 0; i < deviceList.size(); i++) {
-                        subDevices[i] = deviceList.get(i);
-                    }
-                }
+
             });
         }
     }
